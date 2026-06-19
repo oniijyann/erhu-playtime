@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>二胡曲目计数器</title>
+
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind 自定义主题配置（CDN 约束：必须内联在 CDN 脚本之后） -->
     <script>
         tailwind.config = {
             theme: {
@@ -26,258 +29,21 @@
             }
         }
     </script>
+
+    <!-- 字体 & 图标 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-image: url('https://picsum.photos/seed/chinese_ink_painting/1920/1080.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-blend-mode: overlay;
-            background-color: rgba(245, 245, 220, 0.85);
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
-        
-        .status-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .status-silence {
-            background-color: #6B7280;
-        }
-        
-        .status-playing {
-            background-color: #10B981;
-            animation: pulse 1.5s infinite;
-        }
-        
-        .status-confirm {
-            background-color: #F59E0B;
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-        
-        .volume-bar {
-            height: 24px;
-            background: linear-gradient(to right, #10B981, #F59E0B, #EF4444);
-            border-radius: 12px;
-            position: relative;
-        }
-        
-        .volume-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            transition: width 0.1s ease;
-        }
-        
-        .threshold-line {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background-color: #333;
-        }
-        
-        .threshold-label {
-            position: absolute;
-            top: -20px;
-            font-size: 10px;
-            transform: translateX(-50%);
-        }
-        
-        .chinese-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B0000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .scroll-container {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .scroll-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .scroll-container::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
-        }
-        
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: rgba(139, 0, 0, 0.5);
-            border-radius: 3px;
-        }
-        
-        .btn-primary {
-            background-color: #8B0000;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            background-color: #A52A2A;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary:disabled {
-            background-color: #999;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .btn-secondary {
-            background-color: #D4AF37;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #E5C158;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-outline {
-            border: 2px solid #8B0000;
-            color: #8B0000;
-            background-color: transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-outline:hover {
-            background-color: rgba(139, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .input-range {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: rgba(139, 0, 0, 0.2);
-            outline: none;
-        }
-        
-        .input-range::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #8B0000;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .input-range::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
-        }
-        
-        .counter-display {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 6rem;
-            font-weight: 700;
-            color: #8B0000;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            line-height: 1;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .tab-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem 0.5rem 0 0;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn.active {
-            background-color: rgba(139, 0, 0, 0.1);
-            border-bottom: 2px solid #8B0000;
-            color: #8B0000;
-        }
-        
-        .tab-btn:not(.active) {
-            background-color: transparent;
-            color: #6B7280;
-        }
-        
-        .tab-btn:hover:not(.active) {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
 
-        /* Progress bar styles */
-        .progress-bar-container {
-            width: 100%;
-            background-color: rgba(139, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            height: 20px;
-            position: relative;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #8B0000, #D4AF37);
-            border-radius: 8px;
-            transition: width 0.5s ease;
-            min-width: 0;
-        }
-        
-        .progress-bar-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 11px;
-            font-weight: 600;
-            color: #333;
-            white-space: nowrap;
-        }
-    
-    </style>
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
 
+    <!-- ES Module 入口 -->
+    <script type="module" src="js/app.js"></script>
 </head>
 
 <body class="min-h-screen p-4 md:p-8">
     <div class="max-w-4xl mx-auto">
-        
+
         <!-- Main Counter Display -->
         <div class="glass-card rounded-2xl p-6 mb-6 chinese-pattern">
             <!-- 1st Priority: 本场已演奏数 + 本场已演奏时长 (large, centered) -->
@@ -334,14 +100,14 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Tabs -->
         <div class="flex mb-4">
             <button class="tab-btn active" data-tab="main">主控制台</button>
             <button class="tab-btn" data-tab="history">历史记录</button>
             <button class="tab-btn" data-tab="settings">参数设置</button>
         </div>
-        
+
         <!-- Main Tab Content -->
         <div id="mainTab" class="tab-content">
             <!-- Volume Meter -->
@@ -362,7 +128,7 @@
                     <span>0 dB</span>
                 </div>
             </div>
-            
+
             <!-- Device Selection -->
             <div class="glass-card rounded-2xl p-6 mb-6">
                 <h2 class="text-lg font-bold text-primary mb-4">音频设备选择</h2>
@@ -390,7 +156,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Manual Controls -->
             <div class="glass-card rounded-2xl p-6 mb-6">
                 <h2 class="text-lg font-bold text-primary mb-4">手动控制</h2>
@@ -410,7 +176,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- History Tab Content -->
         <div id="historyTab" class="tab-content hidden">
             <div class="glass-card rounded-2xl p-6 mb-6">
@@ -419,7 +185,7 @@
                     <p class="text-muted text-center py-4">暂无记录</p>
                 </div>
             </div>
-            
+
             <div class="glass-card rounded-2xl p-6">
                 <h2 class="text-lg font-bold text-primary mb-4">统计信息</h2>
                 <div class="grid grid-cols-2 gap-4">
@@ -442,12 +208,12 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Settings Tab Content -->
         <div id="settingsTab" class="tab-content hidden">
             <div class="glass-card rounded-2xl p-6 mb-6">
                 <h2 class="text-lg font-bold text-primary mb-4">检测参数设置</h2>
-                
+
                 <div class="mb-6">
                     <div class="flex justify-between mb-2">
                         <label for="startThreshold" class="text-sm font-medium text-muted">开始阈值</label>
@@ -456,7 +222,7 @@
                     <input type="range" id="startThreshold" class="input-range" min="-60" max="0" value="-30" step="1">
                     <p class="text-xs text-muted mt-1">高于此值才认为在演奏</p>
                 </div>
-                
+
                 <div class="mb-6">
                     <div class="flex justify-between mb-2">
                         <label for="endThreshold" class="text-sm font-medium text-muted">结束阈值</label>
@@ -465,7 +231,7 @@
                     <input type="range" id="endThreshold" class="input-range" min="-60" max="0" value="-45" step="1">
                     <p class="text-xs text-muted mt-1">低于此值认为可能停止</p>
                 </div>
-                
+
                 <div class="mb-6">
                     <div class="flex justify-between mb-2">
                         <label for="confirmTime" class="text-sm font-medium text-muted">确认时长</label>
@@ -474,7 +240,7 @@
                     <input type="range" id="confirmTime" class="input-range" min="1" max="10" value="3" step="0.5">
                     <p class="text-xs text-muted mt-1">持续低于结束阈值这么久才确认曲终</p>
                 </div>
-                
+
                 <div class="mb-6">
                     <div class="flex justify-between mb-2">
                         <label for="minDuration" class="text-sm font-medium text-muted">最小曲长</label>
@@ -484,7 +250,7 @@
                     <p class="text-xs text-muted mt-1">短于此时间的演奏不计入</p>
                 </div>
 
-                <!-- Requirement 3: Target settings -->
+                <!-- Target settings -->
                 <div class="mb-6 border-t border-gray-200 pt-4">
                     <h3 class="text-md font-bold text-primary mb-3">目标设置</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -507,18 +273,18 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="glass-card rounded-2xl p-6">
                 <h2 class="text-lg font-bold text-primary mb-4">校准向导</h2>
                 <p class="text-muted mb-4">使用校准向导自动设置最佳参数</p>
-                
+
                 <div class="mb-6">
                     <button id="quietCalibrate" class="btn-secondary px-4 py-2 rounded-lg flex items-center mb-2">
                         <i class="fas fa-volume-off mr-2"></i> 安静校准
                     </button>
                     <p class="text-xs text-muted">记录当前环境噪音，自动设置阈值</p>
                 </div>
-                
+
                 <div>
                     <button id="playingCalibrate" class="btn-secondary px-4 py-2 rounded-lg flex items-center mb-2">
                         <i class="fas fa-music mr-2"></i> 演奏校准
@@ -527,13 +293,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Footer -->
         <footer class="text-center text-muted text-sm mt-8">
             <p>二胡曲目计数器 v1.0 | 基于Web Audio API开发</p>
         </footer>
     </div>
-    
+
     <!-- Calibration Modal -->
     <div id="calibrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4">
@@ -547,990 +313,5 @@
             </div>
         </div>
     </div>
-    
-    <script>
-        // Application State
-        const state = {
-            count: 0,
-            status: 'SILENCE', // SILENCE, PLAYING, CONFIRM_END
-            startTime: null,
-            endTime: null,
-            sessionLog: [],
-            audioContext: null,
-            analyser: null,
-            mediaStream: null,
-            isMonitoring: false,
-            frameBelowEndThresh: 0,
-            frameAboveStartThresh: 0,
-            settings: {
-                startThreshold: -30, // dB
-                endThreshold: -45, // dB
-                confirmTime: 3, // seconds
-                minDuration: 20, // seconds
-                targetCount: 20, // Requirement 3: default target count
-                targetDurationMin: 70 // Requirement 3: default target duration in minutes
-            }
-        };
-        
-        // DOM Elements
-        const elements = {
-            counter: document.getElementById('counter'),
-            statusIndicator: document.getElementById('statusIndicator'),
-            statusText: document.getElementById('statusText'),
-            currentTime: document.getElementById('currentTime'),
-            volumeIndicator: document.getElementById('volumeIndicator'),
-            currentVolume: document.getElementById('currentVolume'),
-            startThresholdLine: document.getElementById('startThresholdLine'),
-            endThresholdLine: document.getElementById('endThresholdLine'),
-            audioDevice: document.getElementById('audioDevice'),
-            refreshDevices: document.getElementById('refreshDevices'),
-            deviceStatus: document.getElementById('deviceStatus'),
-            startButton: document.getElementById('startButton'),
-            stopButton: document.getElementById('stopButton'),
-            calibrateButton: document.getElementById('calibrateButton'),
-            incrementButton: document.getElementById('incrementButton'),
-            decrementButton: document.getElementById('decrementButton'),
-            resetButton: document.getElementById('resetButton'),
-            clearButton: document.getElementById('clearButton'),
-            historyList: document.getElementById('historyList'),
-            todayTotal: document.getElementById('todayTotal'),
-            totalDuration: document.getElementById('totalDuration'),
-            avgDuration: document.getElementById('avgDuration'),
-            maxDuration: document.getElementById('maxDuration'),
-            startThreshold: document.getElementById('startThreshold'),
-            startThresholdValue: document.getElementById('startThresholdValue'),
-            endThreshold: document.getElementById('endThreshold'),
-            endThresholdValue: document.getElementById('endThresholdValue'),
-            confirmTime: document.getElementById('confirmTime'),
-            confirmTimeValue: document.getElementById('confirmTimeValue'),
-            minDuration: document.getElementById('minDuration'),
-            minDurationValue: document.getElementById('minDurationValue'),
-            saveSettings: document.getElementById('saveSettings'),
-            quietCalibrate: document.getElementById('quietCalibrate'),
-            playingCalibrate: document.getElementById('playingCalibrate'),
-            calibrationModal: document.getElementById('calibrationModal'),
-            calibrationTitle: document.getElementById('calibrationTitle'),
-            calibrationMessage: document.getElementById('calibrationMessage'),
-            calibrationVolume: document.getElementById('calibrationVolume'),
-            cancelCalibration: document.getElementById('cancelCalibration'),
-            // Requirement 2: Main console stats elements
-            mainDurationDisplay: document.getElementById('mainDurationDisplay'),
-            // Requirement 3: Target settings elements
-            targetCount: document.getElementById('targetCount'),
-            targetDurationMin: document.getElementById('targetDurationMin'),
-            // Requirement 4: Count progress bar elements
-            countProgressText: document.getElementById('countProgressText'),
-            countProgressPercent: document.getElementById('countProgressPercent'),
-            countProgressBar: document.getElementById('countProgressBar'),
-            // Requirement 5: Duration progress bar elements
-            durationProgressText: document.getElementById('durationProgressText'),
-            durationProgressPercent: document.getElementById('durationProgressPercent'),
-            durationProgressBar: document.getElementById('durationProgressBar'),
-
-        };
-        
-        // Tab functionality
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-                const tabName = button.getAttribute('data-tab');
-                document.getElementById(`${tabName}Tab`).classList.remove('hidden');
-            });
-        });
-        
-        // Initialize the application
-        function init() {
-            updateCurrentTime();
-            setInterval(updateCurrentTime, 1000);
-            
-            loadSettings();
-            loadSessionData();
-            updateThresholdLines();
-            autoStartOrEnumerate();
-            
-            // Listen for device changes (plug / unplug) — debounced
-            let deviceChangeTimer = null;
-            navigator.mediaDevices.addEventListener('devicechange', () => {
-                if (state.isMonitoring) return;
-                if (deviceChangeTimer) clearTimeout(deviceChangeTimer);
-                deviceChangeTimer = setTimeout(() => {
-                    enumerateDevices();
-                }, 300);
-            });
-
-            // Set up event listeners
-            elements.startButton.addEventListener('click', startMonitoring);
-            elements.stopButton.addEventListener('click', stopMonitoring);
-            elements.calibrateButton.addEventListener('click', showCalibrationOptions);
-            elements.refreshDevices.addEventListener('click', () => enumerateDevices());
-            elements.incrementButton.addEventListener('click', () => manualAdjust(1));
-            elements.decrementButton.addEventListener('click', () => manualAdjust(-1));
-            elements.resetButton.addEventListener('click', resetSession);
-            elements.clearButton.addEventListener('click', clearToday);
-            elements.saveSettings.addEventListener('click', saveSettings);
-            elements.quietCalibrate.addEventListener('click', () => startCalibration('quiet'));
-            elements.playingCalibrate.addEventListener('click', () => startCalibration('playing'));
-            elements.cancelCalibration.addEventListener('click', cancelCalibration);
-            
-            // Settings sliders
-            elements.startThreshold.addEventListener('input', () => {
-                elements.startThresholdValue.textContent = `${elements.startThreshold.value} dB`;
-                state.settings.startThreshold = parseInt(elements.startThreshold.value);
-                updateThresholdLines();
-            });
-            
-            elements.endThreshold.addEventListener('input', () => {
-                elements.endThresholdValue.textContent = `${elements.endThreshold.value} dB`;
-                state.settings.endThreshold = parseInt(elements.endThreshold.value);
-                updateThresholdLines();
-            });
-            
-            elements.confirmTime.addEventListener('input', () => {
-                elements.confirmTimeValue.textContent = `${elements.confirmTime.value} 秒`;
-                state.settings.confirmTime = parseFloat(elements.confirmTime.value);
-            });
-            
-            elements.minDuration.addEventListener('input', () => {
-                elements.minDurationValue.textContent = `${elements.minDuration.value} 秒`;
-                state.settings.minDuration = parseInt(elements.minDuration.value);
-            });
-
-            // Requirement 3: Target settings event listeners
-            elements.targetCount.addEventListener('input', () => {
-                const val = parseInt(elements.targetCount.value);
-                if (!isNaN(val) && val >= 1) {
-                    state.settings.targetCount = val;
-                    updateProgressBars();
-                }
-            });
-
-            elements.targetDurationMin.addEventListener('input', () => {
-                const val = parseInt(elements.targetDurationMin.value);
-                if (!isNaN(val) && val >= 1) {
-                    state.settings.targetDurationMin = val;
-                    updateProgressBars();
-                }
-            });
-        }
-        
-        // Update current time display
-        function updateCurrentTime() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            elements.currentTime.textContent = now.toLocaleDateString('zh-CN', options);
-        }
-        
-        // Load settings from localStorage
-        function loadSettings() {
-            const savedSettings = localStorage.getItem('erhu_settings');
-            if (savedSettings) {
-                const parsed = JSON.parse(savedSettings);
-                state.settings = { ...state.settings, ...parsed };
-                
-                // Update UI with saved settings
-                elements.startThreshold.value = state.settings.startThreshold;
-                elements.startThresholdValue.textContent = `${state.settings.startThreshold} dB`;
-                
-                elements.endThreshold.value = state.settings.endThreshold;
-                elements.endThresholdValue.textContent = `${state.settings.endThreshold} dB`;
-                
-                elements.confirmTime.value = state.settings.confirmTime;
-                elements.confirmTimeValue.textContent = `${state.settings.confirmTime} 秒`;
-                
-                elements.minDuration.value = state.settings.minDuration;
-                elements.minDurationValue.textContent = `${state.settings.minDuration} 秒`;
-
-                // Requirement 3: Load target settings
-                elements.targetCount.value = state.settings.targetCount || 20;
-                elements.targetDurationMin.value = state.settings.targetDurationMin || 70;
-            }
-        }
-        
-        // Save settings to localStorage
-        function saveSettings() {
-            // Requirement 3: Save target settings from input values
-            state.settings.targetCount = parseInt(elements.targetCount.value) || 20;
-            state.settings.targetDurationMin = parseInt(elements.targetDurationMin.value) || 70;
-
-            localStorage.setItem('erhu_settings', JSON.stringify(state.settings));
-            showNotification('设置已保存');
-
-            // Requirement 3: Update progress bars after saving targets
-            updateProgressBars();
-        }
-        
-        // Load session data from localStorage
-        function loadSessionData() {
-            const today = new Date().toISOString().split('T')[0];
-            const savedCount = localStorage.getItem(`erhu_today_count_${today}`);
-            const savedLog = localStorage.getItem(`erhu_today_log_${today}`);
-            
-            if (savedCount) {
-                state.count = parseInt(savedCount);
-                elements.counter.textContent = state.count;
-            }
-            
-            if (savedLog) {
-                state.sessionLog = JSON.parse(savedLog);
-                updateHistoryList();
-                updateStatistics();
-            }
-
-            // Requirement 2/4/5/6: Update main console stats and progress bars on load
-            updateMainConsoleStats();
-            updateProgressBars();
-        }
-        
-        // Update threshold lines on the volume meter
-        function updateThresholdLines() {
-            const startPercent = ((state.settings.startThreshold + 60) / 60) * 100;
-            const endPercent = ((state.settings.endThreshold + 60) / 60) * 100;
-            
-            elements.startThresholdLine.style.left = `${startPercent}%`;
-            elements.endThresholdLine.style.left = `${endPercent}%`;
-        }
-        
-        // Auto-start: enumerate devices, keep the stream, and start monitoring in one go.
-        // Only one getUserMedia call → one browser permission dialog → monitoring starts immediately.
-        async function autoStartOrEnumerate() {
-            const result = await enumerateDevices({ keepStream: true });
-            if (result.stream && result.deviceEntries && result.deviceEntries.length > 0) {
-                connectStream(result.stream);
-            }
-        }
-
-        // Enumerate audio input devices
-        // Strategy: getUserMedia first (keep stream alive), then enumerate while active.
-        // Most browsers only expose device labels after permission is granted.
-        let _enumInProgress = false;
-        let _permissionRequested = false;
-
-        async function enumerateDevices(options = {}) {
-            if (_enumInProgress) return { deviceEntries: [], stream: null };
-            _enumInProgress = true;
-
-            let tempStream = null;
-
-            try {
-                // ---- Step 1: Request a temporary stream to unlock device labels ----
-                if (!_permissionRequested) {
-                    try {
-                        tempStream = await navigator.mediaDevices.getUserMedia({
-                            audio: {
-                                echoCancellation: false,
-                                noiseSuppression: false,
-                                autoGainControl: false
-                            }
-                        });
-                        _permissionRequested = true;
-                    } catch (err) {
-                        console.warn('[enumerateDevices] getUserMedia failed:', err.name, err.message);
-                        _permissionRequested = true; // Don't retry on every call
-                    }
-                }
-
-                // ---- Step 2: Enumerate devices ----
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const audioInputs = devices.filter(device => device.kind === 'audioinput');
-
-                console.log('[enumerateDevices] Raw devices:', devices.length,
-                    'audioInputs:', audioInputs.length);
-
-                // ---- Step 3: Build device entries ----
-                const deviceEntries = [];
-
-                // Collect track labels from the active stream (if any) for better naming
-                const trackLabels = [];
-                if (tempStream) {
-                    tempStream.getAudioTracks().forEach(track => {
-                        trackLabels.push({
-                            label: track.label || '',
-                            deviceId: (track.getSettings && track.getSettings().deviceId) || ''
-                        });
-                    });
-                }
-
-                // Add enumerated devices
-                audioInputs.forEach((device, index) => {
-                    let label = device.label;
-                    let deviceId = device.deviceId;
-
-                    // If label/deviceId is empty, try to match with track info
-                    if (!label && trackLabels.length > 0) {
-                        // Use track label as fallback name
-                        const match = trackLabels.find(t => t.deviceId === deviceId) || trackLabels[0];
-                        label = match.label || ('音频输入设备 ' + (index + 1));
-                    }
-                    if (!label) {
-                        label = '音频输入设备 ' + (index + 1);
-                    }
-
-                    // CRITICAL: deviceId must never be empty, otherwise option value conflicts
-                    // with the placeholder option, and auto-select fails.
-                    if (!deviceId) {
-                        deviceId = '__device__' + index;
-                    }
-
-                    deviceEntries.push({
-                        deviceId: deviceId,
-                        label: label,
-                        groupId: device.groupId,
-                        isFallbackId: !!device.deviceId
-                    });
-                });
-
-                // If we have an active stream, try to get track info for better naming
-                if (deviceEntries.length === 0 && state.mediaStream) {
-                    const audioTracks = state.mediaStream.getAudioTracks();
-                    audioTracks.forEach((track, index) => {
-                        const trackLabel = track.label || '系统麦克风';
-                        const settings = track.getSettings ? track.getSettings() : {};
-                        const realDeviceId = settings.deviceId || '';
-                        deviceEntries.push({
-                            deviceId: realDeviceId || ('__track__' + trackLabel),
-                            label: trackLabel + (audioTracks.length > 1 ? ' ' + (index + 1) : ''),
-                            isTrackFallback: !realDeviceId
-                        });
-                    });
-                }
-
-                // If still nothing but permission was granted, add a default fallback
-                if (deviceEntries.length === 0 && _permissionRequested) {
-                    deviceEntries.push({
-                        deviceId: 'default',
-                        label: '系统默认麦克风'
-                    });
-                }
-
-                // If nothing at all
-                if (deviceEntries.length === 0) {
-                    deviceEntries.push({
-                        deviceId: '',
-                        label: '未检测到音频设备 — 请点击刷新',
-                        disabled: true
-                    });
-                }
-
-                console.log('[enumerateDevices] Device entries:', deviceEntries);
-
-                // ---- Step 4: Build the <select> ----
-                const currentSelection = elements.audioDevice.value;
-                elements.audioDevice.innerHTML = '<option value="">请选择音频输入设备</option>';
-
-                deviceEntries.forEach(entry => {
-                    const option = document.createElement('option');
-                    option.value = entry.deviceId;
-                    option.textContent = entry.label;
-                    if (entry.disabled) option.disabled = true;
-                    elements.audioDevice.appendChild(option);
-                });
-
-                // Restore previous selection
-                if (currentSelection) {
-                    const exists = Array.from(elements.audioDevice.options).some(
-                        opt => opt.value === currentSelection
-                    );
-                    if (exists) elements.audioDevice.value = currentSelection;
-                }
-
-                // Auto-select first valid option
-                const realOptions = Array.from(elements.audioDevice.options).filter(
-                    opt => opt.value && !opt.disabled
-                );
-                if (!elements.audioDevice.value && realOptions.length > 0) {
-                    elements.audioDevice.value = realOptions[0].value;
-                }
-
-                console.log('[enumerateDevices] Final:',
-                    elements.audioDevice.options.length, 'options,',
-                    'selected:', elements.audioDevice.value);
-
-                // Update debug status text
-                let statusMsg = '';
-                if (deviceEntries.length === 0) {
-                    statusMsg = '未检测到任何音频设备。请确认麦克风已连接并授予权限。';
-                    elements.deviceStatus.classList.remove('hidden');
-                    elements.deviceStatus.classList.add('text-red-500');
-                } else if (audioInputs.length > 0) {
-                    statusMsg = '已检测到 ' + audioInputs.length + ' 个音频输入设备';
-                    if (!audioInputs.some(d => d.label)) {
-                        statusMsg += ' (标签未暴露，已使用回退名称)';
-                    }
-                    elements.deviceStatus.classList.remove('hidden');
-                    elements.deviceStatus.classList.remove('text-red-500', 'text-yellow-600');
-                    elements.deviceStatus.classList.add('text-green-600');
-                } else if (tempStream && deviceEntries[0] && deviceEntries[0].isTrackFallback) {
-                    statusMsg = '已通过音频轨道检测到: ' + deviceEntries[0].label + ' (枚举API未返回设备列表)';
-                    elements.deviceStatus.classList.remove('hidden');
-                    elements.deviceStatus.classList.remove('text-red-500');
-                    elements.deviceStatus.classList.add('text-yellow-600');
-                    elements.deviceStatus.classList.add('text-green-600');
-                }
-                if (statusMsg) {
-                    elements.deviceStatus.textContent = statusMsg;
-                } else {
-                    elements.deviceStatus.classList.add('hidden');
-                }
-
-                return { deviceEntries, stream: tempStream };
-            } catch (error) {
-                console.error('Error enumerating devices:', error);
-                showNotification('无法获取音频设备列表', 'error');
-                return { deviceEntries: [], stream: null };
-            } finally {
-                // Stop the temporary stream — unless the caller wants to reuse it (auto-start)
-                if (!options.keepStream && tempStream) {
-                    tempStream.getTracks().forEach(track => track.stop());
-                }
-                _enumInProgress = false;
-            }
-        }
-        
-        // Start monitoring audio (manual)
-        async function startMonitoring() {
-            try {
-                const deviceId = elements.audioDevice.value;
-                if (!deviceId) {
-                    showNotification('请先选择音频输入设备', 'error');
-                    return;
-                }
-
-                // Get user media
-                const useDefaultDevice = (deviceId === 'default' || deviceId.startsWith('__track__') || deviceId.startsWith('__device__'));
-                const constraints = {
-                    audio: useDefaultDevice
-                        ? {
-                            echoCancellation: false,
-                            noiseSuppression: false,
-                            autoGainControl: false
-                          }
-                        : {
-                            deviceId: { exact: deviceId },
-                            echoCancellation: false,
-                            noiseSuppression: false,
-                            autoGainControl: false
-                          }
-                };
-                
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                connectStream(stream);
-            } catch (error) {
-                console.error('Error starting monitoring:', error);
-                showNotification('无法访问音频设备', 'error');
-            }
-        }
-        
-        // Stop monitoring audio
-        function stopMonitoring() {
-            if (state.mediaStream) {
-                state.mediaStream.getTracks().forEach(track => track.stop());
-                state.mediaStream = null;
-            }
-            
-            state.isMonitoring = false;
-            state.status = 'SILENCE';
-            updateStatusDisplay();
-            
-            elements.startButton.disabled = false;
-            elements.stopButton.disabled = true;
-            elements.audioDevice.disabled = false;
-            
-            showNotification('已停止监测');
-        }
-
-        // Shared helper: connect a MediaStream to the audio analyser and start monitoring
-        function connectStream(stream) {
-            state.mediaStream = stream;
-            _permissionRequested = true;
-
-            if (!state.audioContext) {
-                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            state.analyser = state.audioContext.createAnalyser();
-            state.analyser.fftSize = 2048;
-
-            const source = state.audioContext.createMediaStreamSource(stream);
-            source.connect(state.analyser);
-
-            state.isMonitoring = true;
-            elements.startButton.disabled = true;
-            elements.stopButton.disabled = false;
-            elements.audioDevice.disabled = true;
-
-            monitorAudio();
-            showNotification('开始监测音频');
-        }
-        
-        // Monitor audio loop
-        function monitorAudio() {
-            if (!state.isMonitoring) return;
-            
-            const bufferLength = state.analyser.fftSize;
-            const dataArray = new Float32Array(bufferLength);
-            state.analyser.getFloatTimeDomainData(dataArray);
-            
-            // Calculate RMS
-            let sum = 0;
-            for (let i = 0; i < bufferLength; i++) {
-                sum += dataArray[i] * dataArray[i];
-            }
-            const rms = Math.sqrt(sum / bufferLength);
-            
-            // Convert to dB
-            const db = 20 * Math.log10(rms);
-            const normalizedDb = Math.max(-60, Math.min(0, db));
-            
-            // Update volume display
-            const volumePercent = ((normalizedDb + 60) / 60) * 100;
-            elements.volumeIndicator.style.width = `${volumePercent}%`;
-            elements.currentVolume.textContent = `${normalizedDb.toFixed(1)} dB`;
-            
-            // Process audio with state machine
-            processAudio(normalizedDb);
-            
-            // Continue monitoring
-            requestAnimationFrame(monitorAudio);
-        }
-        
-        // Process audio with state machine
-        function processAudio(db) {
-            const { startThreshold, endThreshold, confirmTime, minDuration } = state.settings;
-            const confirmFrames = confirmTime * 1000 / 80;
-            
-            switch (state.status) {
-                case 'SILENCE':
-                    if (db > startThreshold) {
-                        state.frameAboveStartThresh++;
-                        if (state.frameAboveStartThresh >= 5) {
-                            state.status = 'PLAYING';
-                            state.startTime = new Date();
-                            state.frameAboveStartThresh = 0;
-                            updateStatusDisplay();
-                        }
-                    } else {
-                        state.frameAboveStartThresh = 0;
-                    }
-                    break;
-                    
-                case 'PLAYING':
-                    if (db < endThreshold) {
-                        state.frameBelowEndThresh++;
-                        if (state.frameBelowEndThresh >= 5) {
-                            state.status = 'CONFIRM_END';
-                            state.endTime = new Date();
-                            state.frameBelowEndThresh = 0;
-                            updateStatusDisplay();
-                        }
-                    } else {
-                        state.frameBelowEndThresh = 0;
-                    }
-                    break;
-                    
-                case 'CONFIRM_END':
-                    if (db > startThreshold) {
-                        state.status = 'PLAYING';
-                        state.endTime = null;
-                        state.frameBelowEndThresh = 0;
-                        updateStatusDisplay();
-                    } else {
-                        state.frameBelowEndThresh++;
-                        if (state.frameBelowEndThresh >= confirmFrames) {
-                            const duration = (state.endTime - state.startTime) / 1000;
-                            
-                            if (duration >= minDuration) {
-                                addPiece(state.startTime, state.endTime, duration);
-                            }
-                            
-                            state.status = 'SILENCE';
-                            state.startTime = null;
-                            state.endTime = null;
-                            state.frameBelowEndThresh = 0;
-                            updateStatusDisplay();
-                        }
-                    }
-                    break;
-            }
-        }
-        
-        // Update status display
-        function updateStatusDisplay() {
-            switch (state.status) {
-                case 'SILENCE':
-                    elements.statusIndicator.className = 'status-indicator status-silence';
-                    elements.statusText.textContent = '安静中';
-                    break;
-                case 'PLAYING':
-                    elements.statusIndicator.className = 'status-indicator status-playing';
-                    elements.statusText.textContent = '演奏中...';
-                    break;
-                case 'CONFIRM_END':
-                    elements.statusIndicator.className = 'status-indicator status-confirm';
-                    elements.statusText.textContent = '确认结束中...';
-                    break;
-            }
-        }
-        
-        // Requirement 2: Update main console stats (total duration)
-        function updateMainConsoleStats() {
-            const totalSeconds = state.sessionLog.reduce((sum, piece) => sum + piece.duration, 0);
-            const totalMinutes = Math.floor(totalSeconds / 60);
-            const totalRemainingSeconds = Math.floor(totalSeconds % 60);
-            elements.mainDurationDisplay.textContent = `${totalMinutes}分${totalRemainingSeconds}秒`;
-        }
-
-        // Requirement 4 & 5: Update progress bars
-        function updateProgressBars() {
-            const targetCount = state.settings.targetCount || 20;
-            const targetDurationMin = state.settings.targetDurationMin || 70;
-
-            // Count progress bar
-            const countPercent = Math.min(state.count / targetCount, 1) * 100;
-            elements.countProgressText.textContent = `${state.count} / ${targetCount} 首`;
-            elements.countProgressPercent.textContent = `${Math.round(countPercent)}%`;
-            elements.countProgressBar.style.width = `${countPercent}%`;
-
-            // Duration progress bar
-            const totalSeconds = state.sessionLog.reduce((sum, piece) => sum + piece.duration, 0);
-            const currentMinutes = Math.floor(totalSeconds / 60);
-            const durationPercent = Math.min(currentMinutes / targetDurationMin, 1) * 100;
-            elements.durationProgressText.textContent = `${currentMinutes} / ${targetDurationMin} 分钟`;
-            elements.durationProgressPercent.textContent = `${Math.round(durationPercent)}%`;
-            elements.durationProgressBar.style.width = `${durationPercent}%`;
-        }
-
-        // Add a piece to the log
-        function addPiece(startTime, endTime, duration) {
-            // Increment counter
-            state.count++;
-            elements.counter.textContent = state.count;
-            
-            // Add to log
-            const piece = {
-                startTime: startTime.toISOString(),
-                endTime: endTime.toISOString(),
-                duration: duration
-            };
-            
-            state.sessionLog.push(piece);
-            
-            // Save to localStorage
-            const today = new Date().toISOString().split('T')[0];
-            localStorage.setItem(`erhu_today_count_${today}`, state.count);
-            localStorage.setItem(`erhu_today_log_${today}`, JSON.stringify(state.sessionLog));
-            
-            // Update UI
-            updateHistoryList();
-            updateStatistics();
-
-            // Requirement 6: Update main console stats and progress bars
-            updateMainConsoleStats();
-            updateProgressBars();
-            
-            // Show notification
-            const durationFormatted = formatDuration(duration);
-            showNotification(`检测到新曲目，时长 ${durationFormatted}`);
-        }
-        
-        // Update history list
-        function updateHistoryList() {
-            if (state.sessionLog.length === 0) {
-                elements.historyList.innerHTML = '<p class="text-muted text-center py-4">暂无记录</p>';
-                return;
-            }
-            
-            let html = '';
-            state.sessionLog.forEach((piece, index) => {
-                const startTime = new Date(piece.startTime);
-                const endTime = new Date(piece.endTime);
-                const duration = formatDuration(piece.duration);
-                
-                html += `
-                    <div class="flex items-center justify-between py-2 border-b border-gray-200">
-                        <div class="flex items-center">
-                            <span class="text-primary font-bold mr-2">${index + 1}.</span>
-                            <span>${startTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} - ${endTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-                        </div>
-                        <span class="text-muted">${duration}${piece.manual ? ' (手动)' : ''}</span>
-                    </div>
-                `;
-            });
-            
-            elements.historyList.innerHTML = html;
-        }
-        
-        // Update statistics
-        function updateStatistics() {
-            elements.todayTotal.textContent = state.count;
-            
-            if (state.sessionLog.length === 0) {
-                elements.totalDuration.textContent = '0分钟';
-                elements.avgDuration.textContent = '0分钟';
-                elements.maxDuration.textContent = '0分钟';
-                return;
-            }
-            
-            const totalSeconds = state.sessionLog.reduce((sum, piece) => sum + piece.duration, 0);
-            const totalMinutes = Math.floor(totalSeconds / 60);
-            const totalRemainingSeconds = Math.floor(totalSeconds % 60);
-            elements.totalDuration.textContent = `${totalMinutes}分${totalRemainingSeconds}秒`;
-            
-            const avgSeconds = totalSeconds / state.sessionLog.length;
-            const avgMinutes = Math.round(avgSeconds / 60);
-            elements.avgDuration.textContent = `${avgMinutes}分钟`;
-            
-            const maxSeconds = Math.max(...state.sessionLog.map(piece => piece.duration));
-            const maxMinutes = Math.round(maxSeconds / 60);
-            elements.maxDuration.textContent = `${maxMinutes}分钟`;
-        }
-        
-        // Format duration in minutes and seconds
-        function formatDuration(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}分${remainingSeconds}秒`;
-        }
-        
-        // Manual adjustment
-        function manualAdjust(delta) {
-            state.count += delta;
-            if (state.count < 0) state.count = 0;
-            
-            elements.counter.textContent = state.count;
-            
-            // Save to localStorage
-            const today = new Date().toISOString().split('T')[0];
-            localStorage.setItem(`erhu_today_count_${today}`, state.count);
-            
-            // Requirement 6: Add manual entry to log if incrementing (duration 0)
-            if (delta > 0) {
-                const now = new Date();
-                const piece = {
-                    startTime: now.toISOString(),
-                    endTime: now.toISOString(),
-                    duration: 0,
-                    manual: true
-                };
-                
-                state.sessionLog.push(piece);
-                localStorage.setItem(`erhu_today_log_${today}`, JSON.stringify(state.sessionLog));
-                updateHistoryList();
-            }
-
-            // Requirement 6: Update stats and progress bars
-            updateMainConsoleStats();
-            updateProgressBars();
-            updateStatistics();
-            
-            showNotification(`手动${delta > 0 ? '增加' : '减少'}曲目`);
-        }
-        
-        // Reset session
-        function resetSession() {
-            if (confirm('确定要重置本场计数吗？这将清除当前显示的计数和日志，但不会删除持久化的今日数据。')) {
-                state.count = 0;
-                state.sessionLog = [];
-                elements.counter.textContent = state.count;
-                updateHistoryList();
-                updateStatistics();
-
-                // Requirement 6: Reset all stats and refresh progress bars
-                updateMainConsoleStats();
-                updateProgressBars();
-
-                showNotification('已重置本场计数');
-            }
-        }
-        
-        // Clear today's data
-        function clearToday() {
-            if (confirm('确定要清除今日所有数据吗？此操作不可恢复。')) {
-                const today = new Date().toISOString().split('T')[0];
-                localStorage.removeItem(`erhu_today_count_${today}`);
-                localStorage.removeItem(`erhu_today_log_${today}`);
-                
-                state.count = 0;
-                state.sessionLog = [];
-                elements.counter.textContent = state.count;
-                updateHistoryList();
-                updateStatistics();
-
-                // Requirement 6: Reset all stats and refresh progress bars
-                updateMainConsoleStats();
-                updateProgressBars();
-
-                showNotification('已清除今日数据');
-            }
-        }
-        
-        // Show calibration options
-        function showCalibrationOptions() {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('[data-tab="settings"]').classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            document.getElementById('settingsTab').classList.remove('hidden');
-        }
-        
-        // Start calibration
-        async function startCalibration(type) {
-            // Check if monitoring is active
-            if (!state.isMonitoring) {
-                try {
-                    const deviceId = elements.audioDevice.value;
-                    if (!deviceId) {
-                        showNotification('请先选择音频输入设备', 'error');
-                        return;
-                    }
-                    
-                    // Get user media
-                    const useDefaultDevice = (deviceId === 'default' || deviceId.startsWith('__track__') || deviceId.startsWith('__device__'));
-                    const constraints = {
-                        audio: useDefaultDevice
-                            ? {
-                                echoCancellation: false,
-                                noiseSuppression: false,
-                                autoGainControl: false
-                              }
-                            : {
-                                deviceId: { exact: deviceId },
-                                echoCancellation: false,
-                                noiseSuppression: false,
-                                autoGainControl: false
-                              }
-                    };
-                    
-                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    connectStream(stream);
-                } catch (error) {
-                    console.error('Error starting monitoring for calibration:', error);
-                    showNotification('无法访问音频设备', 'error');
-                    return;
-                }
-            }
-            
-            elements.calibrationModal.classList.remove('hidden');
-            
-            if (type === 'quiet') {
-                elements.calibrationTitle.textContent = '安静校准';
-                elements.calibrationMessage.textContent = '请保持安静，系统正在测量环境噪音...';
-                
-                const samples = [];
-                const sampleInterval = setInterval(() => {
-                    const db = getCurrentDb();
-                    samples.push(db);
-                    
-                    const volumePercent = ((db + 60) / 60) * 100;
-                    elements.calibrationVolume.style.width = `${volumePercent}%`;
-                }, 100);
-                
-                setTimeout(() => {
-                    clearInterval(sampleInterval);
-                    
-                    const avgDb = samples.reduce((sum, db) => sum + db, 0) / samples.length;
-                    
-                    state.settings.startThreshold = Math.round(avgDb + 15);
-                    state.settings.endThreshold = Math.round(avgDb + 5);
-                    
-                    elements.startThreshold.value = state.settings.startThreshold;
-                    elements.startThresholdValue.textContent = `${state.settings.startThreshold} dB`;
-                    
-                    elements.endThreshold.value = state.settings.endThreshold;
-                    elements.endThresholdValue.textContent = `${state.settings.endThreshold} dB`;
-                    
-                    updateThresholdLines();
-                    
-                    elements.calibrationMessage.textContent = `校准完成！环境噪音: ${avgDb.toFixed(1)} dB`;
-                    
-                    setTimeout(() => {
-                        elements.calibrationModal.classList.add('hidden');
-                        showNotification('安静校准完成');
-                    }, 2000);
-                }, 2000);
-            } else if (type === 'playing') {
-                elements.calibrationTitle.textContent = '演奏校准';
-                elements.calibrationMessage.textContent = '请演奏一段中等强度的长音...';
-                
-                const samples = [];
-                const sampleInterval = setInterval(() => {
-                    const db = getCurrentDb();
-                    samples.push(db);
-                    
-                    const volumePercent = ((db + 60) / 60) * 100;
-                    elements.calibrationVolume.style.width = `${volumePercent}%`;
-                }, 100);
-                
-                setTimeout(() => {
-                    clearInterval(sampleInterval);
-                    
-                    const avgDb = samples.reduce((sum, db) => sum + db, 0) / samples.length;
-                    
-                    state.settings.startThreshold = Math.round(avgDb - 10);
-                    state.settings.endThreshold = Math.round(avgDb - 20);
-                    
-                    elements.startThreshold.value = state.settings.startThreshold;
-                    elements.startThresholdValue.textContent = `${state.settings.startThreshold} dB`;
-                    
-                    elements.endThreshold.value = state.settings.endThreshold;
-                    elements.endThresholdValue.textContent = `${state.settings.endThreshold} dB`;
-                    
-                    updateThresholdLines();
-                    
-                    elements.calibrationMessage.textContent = `校准完成！演奏音量: ${avgDb.toFixed(1)} dB`;
-                    
-                    setTimeout(() => {
-                        elements.calibrationModal.classList.add('hidden');
-                        showNotification('演奏校准完成');
-                    }, 2000);
-                }, 5000);
-            }
-        }
-        
-        // Cancel calibration
-        function cancelCalibration() {
-            elements.calibrationModal.classList.add('hidden');
-        }
-        
-        // Get current dB level
-        function getCurrentDb() {
-            if (!state.analyser) return -60;
-            
-            const bufferLength = state.analyser.fftSize;
-            const dataArray = new Float32Array(bufferLength);
-            state.analyser.getFloatTimeDomainData(dataArray);
-            
-            let sum = 0;
-            for (let i = 0; i < bufferLength; i++) {
-                sum += dataArray[i] * dataArray[i];
-            }
-            const rms = Math.sqrt(sum / bufferLength);
-            
-            const db = 20 * Math.log10(rms);
-            return Math.max(-60, Math.min(0, db));
-        }
-        
-        // Show notification
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg fade-in ${type === 'error' ? 'bg-red-500' : 'bg-green-500'} text-white`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 500);
-            }, 3000);
-        }
-        
-        // Initialize the application when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-
 </body>
-
 </html>

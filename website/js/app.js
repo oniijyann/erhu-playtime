@@ -69,6 +69,9 @@ function init() {
         onMinDurationChange: (val) => {
             state.settings.minDuration = val;
         },
+        onMergeGapChange: (val) => {
+            state.settings.mergeGap = val;
+        },
         onTargetCountChange: (val) => {
             if (!isNaN(val) && val >= 1) {
                 state.settings.targetCount = val;
@@ -163,6 +166,33 @@ function handleStop() {
 // ─── 曲目检测回调 ───
 
 function handlePieceDetected(piece) {
+    const { mergeGap } = state.settings;
+    const lastPiece = state.sessionLog[state.sessionLog.length - 1];
+
+    // 检查与前一首的间隔，间隔 < mergeGap 则合并（间奏），不增加计数
+    if (lastPiece && !lastPiece.manual) {
+        const gap = (new Date(piece.startTime) - new Date(lastPiece.endTime)) / 1000;
+
+        if (gap < mergeGap) {
+            // 合并：延长上一首的 endTime，累加 duration，count 不变
+            lastPiece.endTime = piece.endTime;
+            lastPiece.duration += piece.duration;
+            lastPiece.merged = true;
+
+            storage.saveLog();
+
+            ui.updateHistoryList();
+            ui.updateStatistics();
+            ui.updateMainConsoleStats();
+            ui.updateProgressBars();
+
+            const addedFormatted = formatDuration(piece.duration);
+            showNotification(`间奏结束，合并到上一首 (+${addedFormatted})`);
+            return;
+        }
+    }
+
+    // 正常新增：新的一首
     state.count++;
     state.sessionLog.push(piece);
     storage.saveCount();
@@ -245,7 +275,7 @@ function clearToday() {
 function saveSettings() {
     state.settings.targetCount = parseInt(ui.elements.targetCount.value) || 20;
     state.settings.targetDurationMin = parseInt(ui.elements.targetDurationMin.value) || 70;
-
+    // mergeGap、minDuration 等滑块已通过 input 事件实时同步到 state，此处仅持久化
     storage.saveSettings();
     showNotification('设置已保存');
     ui.updateProgressBars();

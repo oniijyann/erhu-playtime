@@ -22,8 +22,9 @@ export const state = {
     settings: {
         startThreshold: -35,   // dB
         endThreshold: -45,     // dB
-        confirmTime: 5,        // seconds
+        confirmTime: 3,        // seconds
         minDuration: 20,       // seconds
+        mergeGap: 0,          // seconds — 间隔小于此值则合并为同一首（间奏容忍）
         targetCount: 20,
         targetDurationMin: 70  // minutes
     }

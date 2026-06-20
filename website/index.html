@@ -217,7 +217,7 @@
                 <div class="mb-6">
                     <div class="flex justify-between mb-2">
                         <label for="startThreshold" class="text-sm font-medium text-muted">开始阈值</label>
-                        <span id="startThresholdValue" class="text-sm font-bold text-primary">-30 dB</span>
+                        <span id="startThresholdValue" class="text-sm font-bold text-primary">-35 dB</span>
                     </div>
                     <input type="range" id="startThreshold" class="input-range" min="-60" max="0" value="-30" step="1">
                     <p class="text-xs text-muted mt-1">高于此值才认为在演奏</p>
@@ -248,6 +248,15 @@
                     </div>
                     <input type="range" id="minDuration" class="input-range" min="5" max="60" value="20" step="1">
                     <p class="text-xs text-muted mt-1">短于此时间的演奏不计入</p>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <label for="mergeGap" class="text-sm font-medium text-muted">间奏合并时长</label>
+                        <span id="mergeGapValue" class="text-sm font-bold text-primary">0 秒</span>
+                    </div>
+                    <input type="range" id="mergeGap" class="input-range" min="0" max="120" value="0" step="5">
+                    <p class="text-xs text-muted mt-1">两段演奏间隔小于此值则合并为一首（避免间奏拆分）</p>
                 </div>
 
                 <!-- Target settings -->

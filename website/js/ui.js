@@ -38,6 +38,8 @@ export const elements = {
     confirmTimeValue: document.getElementById('confirmTimeValue'),
     minDuration: document.getElementById('minDuration'),
     minDurationValue: document.getElementById('minDurationValue'),
+    mergeGap: document.getElementById('mergeGap'),
+    mergeGapValue: document.getElementById('mergeGapValue'),
     saveSettings: document.getElementById('saveSettings'),
     quietCalibrate: document.getElementById('quietCalibrate'),
     playingCalibrate: document.getElementById('playingCalibrate'),
@@ -118,6 +120,12 @@ export function bindEvents(callbacks) {
         const val = parseInt(elements.minDuration.value);
         elements.minDurationValue.textContent = `${val} 秒`;
         callbacks.onMinDurationChange(val);
+    });
+
+    elements.mergeGap.addEventListener('input', () => {
+        const val = parseInt(elements.mergeGap.value);
+        elements.mergeGapValue.textContent = `${val} 秒`;
+        callbacks.onMergeGapChange(val);
     });
 
     // 目标设置
@@ -208,6 +216,8 @@ export function updateHistoryList() {
         const startTime = new Date(piece.startTime);
         const endTime = new Date(piece.endTime);
         const duration = formatDuration(piece.duration);
+        const mergedTag = piece.merged ? ' <span class="text-xs text-yellow-600">(含间奏)</span>' : '';
+        const manualTag = piece.manual ? ' (手动)' : '';
 
         html += `
             <div class="flex items-center justify-between py-2 border-b border-gray-200">
@@ -215,7 +225,7 @@ export function updateHistoryList() {
                     <span class="text-primary font-bold mr-2">${index + 1}.</span>
                     <span>${startTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} - ${endTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                 </div>
-                <span class="text-muted">${duration}${piece.manual ? ' (手动)' : ''}</span>
+                <span class="text-muted">${duration}${manualTag}${mergedTag}</span>
             </div>
         `;
     });
@@ -261,6 +271,9 @@ export function syncSettingsUI() {
 
     elements.minDuration.value = state.settings.minDuration;
     elements.minDurationValue.textContent = `${state.settings.minDuration} 秒`;
+
+    elements.mergeGap.value = state.settings.mergeGap;
+    elements.mergeGapValue.textContent = `${state.settings.mergeGap} 秒`;
 
     elements.targetCount.value = state.settings.targetCount || 20;
     elements.targetDurationMin.value = state.settings.targetDurationMin || 70;

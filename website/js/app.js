@@ -7,6 +7,7 @@ import * as ui from './ui.js';
 import * as storage from './storage.js';
 import { startCalibration, cancelCalibration } from './calibrate.js';
 import { showNotification, formatDuration } from './utils.js';
+import { praises } from './praise.js';
 
 // ─── 初始化 ───
 
@@ -205,7 +206,8 @@ function handlePieceDetected(piece) {
     ui.updateProgressBars();
 
     const durationFormatted = formatDuration(piece.duration);
-    showNotification(`检测到新曲目，时长 ${durationFormatted}`);
+    const praise = praises[Math.floor(Math.random() * praises.length)];
+    showNotification(`检测到新曲目，时长 ${durationFormatted}<br>${praise}`);
 }
 
 // ─── 手动调整 ───

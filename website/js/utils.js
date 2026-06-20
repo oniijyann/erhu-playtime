@@ -10,12 +10,12 @@ export function formatDuration(seconds) {
 }
 
 /**
- * 右上角 toast 通知（自包含 DOM 工具，3 秒后淡出移除）
+ * 右上角 toast 通知（自包含 DOM 工具，5 秒后淡出移除）
  */
 export function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg fade-in ${type === 'error' ? 'bg-red-500' : 'bg-green-500'} text-white`;
-    notification.textContent = message;
+    notification.innerHTML = message;
 
     document.body.appendChild(notification);
 
@@ -25,5 +25,5 @@ export function showNotification(message, type = 'success') {
         setTimeout(() => {
             document.body.removeChild(notification);
         }, 500);
-    }, 3000);
+    }, 5000);
 }

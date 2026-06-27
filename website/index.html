@@ -45,8 +45,8 @@
     <div class="max-w-4xl mx-auto">
 
         <!-- Main Counter Display -->
-        <div class="glass-card rounded-2xl p-6 mb-6 chinese-pattern">
-            <!-- 1st Priority: 本场已演奏数 + 本场已演奏时长 (large, centered) -->
+        <div class="glass-card rounded-2xl p-5 mb-6 chinese-pattern">
+            <!-- 1st Priority: 已演奏数 + 总演奏时长 (最显眼) -->
             <div class="flex items-center justify-center gap-6 md:gap-12">
                 <!-- 演奏数 -->
                 <div class="text-center">
@@ -67,18 +67,18 @@
                 </div>
             </div>
 
-            <!-- 2nd Priority: 演奏状态 (centered, prominent) -->
-            <div class="flex items-center justify-center my-4">
-                <span id="statusIndicator" class="status-indicator status-silence" style="width:20px;height:20px;"></span>
-                <span id="statusText" class="font-medium text-lg ml-2">安静中</span>
+            <!-- 2nd Priority: 状态 + 时间 (同一行,紧凑) -->
+            <div class="flex items-center justify-center gap-3 my-2">
+                <span id="statusIndicator" class="status-indicator status-silence" style="width:14px;height:14px;margin-right:0;"></span>
+                <span id="statusText" class="font-medium text-base">安静中</span>
+                <span class="text-muted text-xs">·</span>
+                <p id="currentTime" class="text-muted text-xs m-0"></p>
             </div>
 
-            <!-- 3rd Priority: 时间 + 进度条 -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <p id="currentTime" class="text-center text-muted text-sm mb-4"></p>
-
+            <!-- 3rd Priority: 进度条 -->
+            <div class="mt-2 pt-3 border-t border-gray-200">
                 <!-- Piece count progress bar -->
-                <div class="mb-3">
+                <div class="mb-2">
                     <div class="flex justify-between text-xs text-muted mb-1">
                         <span>曲目进度: <span id="countProgressText">0 / 20 首</span></span>
                         <span id="countProgressPercent">0%</span>
@@ -98,6 +98,22 @@
                         <div id="durationProgressBar" class="progress-bar-fill" style="width: 0%"></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- 4th Priority: 手动控制 (紧凑横排) -->
+            <div class="flex gap-2 mt-3 pt-3 border-t border-gray-200">
+                <button id="incrementButton" class="btn-primary flex-1 px-2 py-1.5 rounded-lg text-sm flex items-center justify-center" title="手动加曲">
+                    <i class="fas fa-plus mr-1"></i>加曲
+                </button>
+                <button id="decrementButton" class="btn-secondary flex-1 px-2 py-1.5 rounded-lg text-sm flex items-center justify-center" title="手动减曲">
+                    <i class="fas fa-minus mr-1"></i>减曲
+                </button>
+                <button id="resetButton" class="btn-outline flex-1 px-2 py-1.5 rounded-lg text-sm flex items-center justify-center" title="重置本场">
+                    <i class="fas fa-redo mr-1"></i>重置
+                </button>
+                <button id="clearButton" class="btn-outline flex-1 px-2 py-1.5 rounded-lg text-sm flex items-center justify-center" title="清除今日">
+                    <i class="fas fa-trash mr-1"></i>清除
+                </button>
             </div>
         </div>
 
@@ -153,25 +169,6 @@
                     </button>
                     <button id="calibrateButton" class="btn-outline px-4 py-2 rounded-lg flex items-center">
                         <i class="fas fa-sliders-h mr-2"></i> 校准
-                    </button>
-                </div>
-            </div>
-
-            <!-- Manual Controls -->
-            <div class="glass-card rounded-2xl p-6 mb-6">
-                <h2 class="text-lg font-bold text-primary mb-4">手动控制</h2>
-                <div class="flex flex-wrap gap-2">
-                    <button id="incrementButton" class="btn-primary px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-plus mr-2"></i> 手动加曲
-                    </button>
-                    <button id="decrementButton" class="btn-secondary px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-minus mr-2"></i> 手动减曲
-                    </button>
-                    <button id="resetButton" class="btn-outline px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-redo mr-2"></i> 重置本场
-                    </button>
-                    <button id="clearButton" class="btn-outline px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-trash mr-2"></i> 清除今日
                     </button>
                 </div>
             </div>
@@ -257,6 +254,58 @@
                     </div>
                     <input type="range" id="mergeGap" class="input-range" min="0" max="120" value="0" step="5">
                     <p class="text-xs text-muted mt-1">两段演奏间隔小于此值则合并为一首（避免间奏拆分）</p>
+                </div>
+
+                <!-- L1: Start coverage gate -->
+                <div class="mb-6 border-t border-gray-200 pt-4">
+                    <h3 class="text-md font-bold text-primary mb-3">开始确认（覆盖率门控）</h3>
+                    <div class="mb-3 flex items-center">
+                        <input type="checkbox" id="startCoverageEnabled" class="mr-2" checked>
+                        <label for="startCoverageEnabled" class="text-sm font-medium text-muted">启用（防单次误触发）</label>
+                    </div>
+                    <p class="text-xs text-muted mt-1 mb-3">开启后需在窗口内持续达到占比才确认开始演奏，避免咳嗽 / 单句说话误触发</p>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-2">
+                            <label for="startCoverageWindow" class="text-sm font-medium text-muted">窗口时长</label>
+                            <span id="startCoverageWindowValue" class="text-sm font-bold text-primary">2 秒</span>
+                        </div>
+                        <input type="range" id="startCoverageWindow" class="input-range" min="1" max="10" value="2" step="0.5">
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-2">
+                            <label for="startCoverageRatio" class="text-sm font-medium text-muted">覆盖率阈值</label>
+                            <span id="startCoverageRatioValue" class="text-sm font-bold text-primary">70%</span>
+                        </div>
+                        <input type="range" id="startCoverageRatio" class="input-range" min="30" max="100" value="70" step="5">
+                        <p class="text-xs text-muted mt-1">窗口内音量超过开始阈值的占比需达到此值</p>
+                    </div>
+                </div>
+
+                <!-- L3: Playing coverage gate -->
+                <div class="mb-6">
+                    <h3 class="text-md font-bold text-primary mb-3">演奏保持（覆盖率门控）</h3>
+                    <div class="mb-3 flex items-center">
+                        <input type="checkbox" id="playingCoverageEnabled" class="mr-2" checked>
+                        <label for="playingCoverageEnabled" class="text-sm font-medium text-muted">启用（防连续误判为长曲）</label>
+                    </div>
+                    <p class="text-xs text-muted mt-1 mb-3">开启后若窗口内演奏占比不足将提前进入结束判定，避免持续说话被记成一首长曲</p>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-2">
+                            <label for="playingCoverageWindow" class="text-sm font-medium text-muted">窗口时长</label>
+                            <span id="playingCoverageWindowValue" class="text-sm font-bold text-primary">5 秒</span>
+                        </div>
+                        <input type="range" id="playingCoverageWindow" class="input-range" min="2" max="15" value="5" step="1">
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-2">
+                            <label for="playingCoverageRatio" class="text-sm font-medium text-muted">覆盖率阈值</label>
+                            <span id="playingCoverageRatioValue" class="text-sm font-bold text-primary">50%</span>
+                        </div>
+                        <input type="range" id="playingCoverageRatio" class="input-range" min="20" max="100" value="50" step="5">
+                        <p class="text-xs text-muted mt-1">占比低于此值则认为已停止演奏</p>
+                    </div>
                 </div>
 
                 <!-- Target settings -->

@@ -14,9 +14,13 @@ export const state = {
     mediaStream: null,
     isMonitoring: false,
 
-    // 状态机帧计数
-    frameBelowEndThresh: 0,
-    frameAboveStartThresh: 0,
+    // 状态机时间戳（替代原帧计数，避免后台节流导致计时失真）
+    aboveStartSince: null,   // SILENCE：首次过 startThreshold 的时间
+    belowEndSince: null,     // PLAYING：首次低于 endThreshold 的时间
+    endConfirmSince: null,   // CONFIRM_END：进入确认的时间
+
+    // 滑动窗口：覆盖率门控用，每项 { t, aboveStart, belowEnd }
+    dbHistory: [],
 
     // 可调参数
     settings: {
@@ -24,8 +28,18 @@ export const state = {
         endThreshold: -45,     // dB
         confirmTime: 3,        // seconds
         minDuration: 20,       // seconds
-        mergeGap: 0,          // seconds — 间隔小于此值则合并为同一首（间奏容忍）
+        mergeGap: 0,           // seconds — 间隔小于此值则合并为同一首（间奏容忍）
         targetCount: 20,
-        targetDurationMin: 70  // minutes
+        targetDurationMin: 70, // minutes
+
+        // L1：开始确认覆盖率门控（防单次误触发）
+        startCoverageEnabled: true,
+        startCoverageWindow: 2,   // seconds
+        startCoverageRatio: 70,   // %
+
+        // L3：演奏保持覆盖率门控（防连续误判为长曲）
+        playingCoverageEnabled: true,
+        playingCoverageWindow: 5, // seconds
+        playingCoverageRatio: 50  // %
     }
 };

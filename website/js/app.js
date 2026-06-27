@@ -73,6 +73,24 @@ function init() {
         onMergeGapChange: (val) => {
             state.settings.mergeGap = val;
         },
+        onStartCoverageEnabledChange: (val) => {
+            state.settings.startCoverageEnabled = val;
+        },
+        onStartCoverageWindowChange: (val) => {
+            state.settings.startCoverageWindow = val;
+        },
+        onStartCoverageRatioChange: (val) => {
+            state.settings.startCoverageRatio = val;
+        },
+        onPlayingCoverageEnabledChange: (val) => {
+            state.settings.playingCoverageEnabled = val;
+        },
+        onPlayingCoverageWindowChange: (val) => {
+            state.settings.playingCoverageWindow = val;
+        },
+        onPlayingCoverageRatioChange: (val) => {
+            state.settings.playingCoverageRatio = val;
+        },
         onTargetCountChange: (val) => {
             if (!isNaN(val) && val >= 1) {
                 state.settings.targetCount = val;

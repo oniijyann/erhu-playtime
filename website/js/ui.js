@@ -40,6 +40,16 @@ export const elements = {
     minDurationValue: document.getElementById('minDurationValue'),
     mergeGap: document.getElementById('mergeGap'),
     mergeGapValue: document.getElementById('mergeGapValue'),
+    startCoverageEnabled: document.getElementById('startCoverageEnabled'),
+    startCoverageWindow: document.getElementById('startCoverageWindow'),
+    startCoverageWindowValue: document.getElementById('startCoverageWindowValue'),
+    startCoverageRatio: document.getElementById('startCoverageRatio'),
+    startCoverageRatioValue: document.getElementById('startCoverageRatioValue'),
+    playingCoverageEnabled: document.getElementById('playingCoverageEnabled'),
+    playingCoverageWindow: document.getElementById('playingCoverageWindow'),
+    playingCoverageWindowValue: document.getElementById('playingCoverageWindowValue'),
+    playingCoverageRatio: document.getElementById('playingCoverageRatio'),
+    playingCoverageRatioValue: document.getElementById('playingCoverageRatioValue'),
     saveSettings: document.getElementById('saveSettings'),
     quietCalibrate: document.getElementById('quietCalibrate'),
     playingCalibrate: document.getElementById('playingCalibrate'),
@@ -126,6 +136,34 @@ export function bindEvents(callbacks) {
         const val = parseInt(elements.mergeGap.value);
         elements.mergeGapValue.textContent = `${val} 秒`;
         callbacks.onMergeGapChange(val);
+    });
+
+    // L1 / L3 覆盖率门控
+    elements.startCoverageEnabled.addEventListener('change', () => {
+        callbacks.onStartCoverageEnabledChange(elements.startCoverageEnabled.checked);
+    });
+    elements.startCoverageWindow.addEventListener('input', () => {
+        const val = parseFloat(elements.startCoverageWindow.value);
+        elements.startCoverageWindowValue.textContent = `${val} 秒`;
+        callbacks.onStartCoverageWindowChange(val);
+    });
+    elements.startCoverageRatio.addEventListener('input', () => {
+        const val = parseInt(elements.startCoverageRatio.value);
+        elements.startCoverageRatioValue.textContent = `${val}%`;
+        callbacks.onStartCoverageRatioChange(val);
+    });
+    elements.playingCoverageEnabled.addEventListener('change', () => {
+        callbacks.onPlayingCoverageEnabledChange(elements.playingCoverageEnabled.checked);
+    });
+    elements.playingCoverageWindow.addEventListener('input', () => {
+        const val = parseInt(elements.playingCoverageWindow.value);
+        elements.playingCoverageWindowValue.textContent = `${val} 秒`;
+        callbacks.onPlayingCoverageWindowChange(val);
+    });
+    elements.playingCoverageRatio.addEventListener('input', () => {
+        const val = parseInt(elements.playingCoverageRatio.value);
+        elements.playingCoverageRatioValue.textContent = `${val}%`;
+        callbacks.onPlayingCoverageRatioChange(val);
     });
 
     // 目标设置
@@ -274,6 +312,18 @@ export function syncSettingsUI() {
 
     elements.mergeGap.value = state.settings.mergeGap;
     elements.mergeGapValue.textContent = `${state.settings.mergeGap} 秒`;
+
+    // L1 / L3 覆盖率门控
+    elements.startCoverageEnabled.checked = !!state.settings.startCoverageEnabled;
+    elements.startCoverageWindow.value = state.settings.startCoverageWindow;
+    elements.startCoverageWindowValue.textContent = `${state.settings.startCoverageWindow} 秒`;
+    elements.startCoverageRatio.value = state.settings.startCoverageRatio;
+    elements.startCoverageRatioValue.textContent = `${state.settings.startCoverageRatio}%`;
+    elements.playingCoverageEnabled.checked = !!state.settings.playingCoverageEnabled;
+    elements.playingCoverageWindow.value = state.settings.playingCoverageWindow;
+    elements.playingCoverageWindowValue.textContent = `${state.settings.playingCoverageWindow} 秒`;
+    elements.playingCoverageRatio.value = state.settings.playingCoverageRatio;
+    elements.playingCoverageRatioValue.textContent = `${state.settings.playingCoverageRatio}%`;
 
     elements.targetCount.value = state.settings.targetCount || 20;
     elements.targetDurationMin.value = state.settings.targetDurationMin || 70;
